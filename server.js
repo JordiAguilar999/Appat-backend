@@ -2,13 +2,18 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-app.use(cors({ origin: '*' }));
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+app.options('*', cors());
 app.use(express.json());
 
-// Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Proxy Claude API para AppAT
 app.post('/api/claude', async (req, res) => {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
